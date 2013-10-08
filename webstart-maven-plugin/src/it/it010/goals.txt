@@ -1,1 +1,1 @@
-clean org.codehaus.mojo:webstart-maven-plugin:jnlp-inline
+clean ${project.groupId}:${project.artifactId}:jnlp-inline

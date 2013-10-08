@@ -295,6 +295,7 @@
             </configuration>
             <executions>
               <execution>
+                <phase>integration-test</phase>
                 <goals>
                   <goal>install</goal>
                   <goal>run</goal>
@@ -304,6 +305,14 @@
           </plugin>
         </plugins>
       </build>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>webstart-jnlp-servlet</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
     </profile>
 
     <profile>

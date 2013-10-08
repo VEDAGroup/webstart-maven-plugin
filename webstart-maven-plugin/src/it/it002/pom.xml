@@ -56,7 +56,7 @@ just added to check that dependencies are properly filtered out -->
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>@project.groupId@</groupId>
           <artifactId>webstart-maven-plugin</artifactId>
           <version>@project.version@</version>
         </plugin>

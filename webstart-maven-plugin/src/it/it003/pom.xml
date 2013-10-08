@@ -19,9 +19,9 @@
     <dependencies>
 
       <dependency>
-        <groupId>org.codehaus.mojo.webstart</groupId>
+        <groupId>@project.groupId@</groupId>
         <artifactId>webstart-jnlp-servlet</artifactId>
-        <version>${webstartJnlpServletVersion}</version>
+        <version>@project.version@</version>
         <scope>runtime</scope>
       </dependency>
 
@@ -38,7 +38,7 @@
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.codehaus.mojo</groupId>
+          <groupId>@project.groupId@</groupId>
           <artifactId>webstart-maven-plugin</artifactId>
           <version>@project.version@</version>
         </plugin>
