@@ -55,6 +55,6 @@
   </profiles>
 
   <pluginGroups>
-    <pluginGroup>org.codehaus.mojo</pluginGroup>
+    <pluginGroup>@project.groupId@</pluginGroup>
   </pluginGroups>
 </settings>
