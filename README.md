@@ -1,5 +1,5 @@
-webstart-maven-plugin
-=====================
+Webstart Maven Plugin (VEDA Fork)
+=================================
 
 This is a fork of the Codehaus Webstart Maven Plugin - http://mojo.codehaus.org/webstart/webstart-maven-plugin/
 
