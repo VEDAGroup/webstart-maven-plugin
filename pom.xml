@@ -5,14 +5,15 @@
     <version>31</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>org.codehaus.mojo</groupId>
-  <artifactId>webstart</artifactId>
+  <groupId>net.veda</groupId>
+  <artifactId>webstart-mojo</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-beta-4-SNAPSHOT</version>
+  <version>1.0.4-SNAPSHOT</version>
   <name>MWEBSTART :: Project</name>
   <description>Webstart Maven Plugin and related modules</description>
-  <url>http://mojo.codehaus.org/webstart</url>
+  <url>https://github.com/VEDAGroup/webstart-maven-plugin</url>
 
+<!--
   <issueManagement>
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MWEBSTART</url>
@@ -21,6 +22,7 @@
     <system>bamboo</system>
     <url>http://bamboo.ci.codehaus.org/browse/MOJO-MWEBSTART</url>
   </ciManagement>
+-->
 
   <inceptionYear>2005</inceptionYear>
 
@@ -33,9 +35,9 @@
   </licenses>
 
   <scm>
-    <url>https://svn.codehaus.org/mojo/trunk/mojo/webstart</url>
-    <connection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/webstart</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/mojo/trunk/mojo/webstart</developerConnection>
+    <url>https://github.com/VEDAGroup/webstart-maven-plugin.git</url>
+    <connection>scm:git:https://github.com/VEDAGroup/webstart-maven-plugin.git</connection>
+    <developerConnection>scm:git:https://github.com/VEDAGroup/webstart-maven-plugin.git</developerConnection>
   </scm>
 
   <developers>
