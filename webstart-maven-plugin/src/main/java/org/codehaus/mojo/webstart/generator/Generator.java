@@ -109,7 +109,12 @@ public class Generator
             for ( int i = 0; i < artifacts.size(); i++ )
             {
                 Artifact artifact = (Artifact) artifacts.get( i );
-                buffer.append( "<jar href=\"" );
+				String classifier = artifact.getClassifier();
+				if (classifier == null || !classifier.startsWith("native")) {
+					buffer.append("<jar href=\"");
+				} else {
+					buffer.append("<nativelib href=\"");
+				}
                 if ( jarLibPath != null )
                 {
                     buffer.append( jarLibPath ).append( "/" );
