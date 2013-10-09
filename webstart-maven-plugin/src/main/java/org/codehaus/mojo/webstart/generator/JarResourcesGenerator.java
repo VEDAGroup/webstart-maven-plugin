@@ -89,32 +89,16 @@ public class JarResourcesGenerator
                     continue;
                 }
 
-				String classifier = jarResource.getClassifier();
-				if (classifier == null || !classifier.startsWith("native")) {
-					buffer.append("<jar href=\"");
-				} else {
-					buffer.append("<nativelib href=\"");
-				}
-                if ( StringUtils.isNotEmpty( libPath ) )
-                {
-                    buffer.append( libPath );
-                    buffer.append( '/' );
-                }
-                buffer.append( jarResource.getHrefValue() );
-                buffer.append( "\"" );
-
-                if ( jarResource.isOutputJarVersion() )
-                {
-                    buffer.append( " version=\"" ).append( jarResource.getVersion() ).append( "\"" );
-                }
-
-                if ( jarResource.getMainClass() != null )
-                {
-                    buffer.append( " main=\"true\"" );
-                }
-
-                buffer.append( "/>\n" );
-            }
+				String version = jarResource.isOutputJarVersion() ? jarResource.getVersion() : null;
+				buffer.append(
+						createReferenceText(jarResource.getHrefValue(),
+											libPath,
+											version,
+											isNativeClassifier(jarResource.getClassifier()),
+											StringUtils.isNotEmpty(jarResource.getMainClass())
+						)
+				).append("\n");
+			}
             jarResourcesText = buffer.toString();
         }
         return jarResourcesText;
