@@ -26,6 +26,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.log.NullLogSystem;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
@@ -157,7 +158,54 @@ public abstract class AbstractGenerator
         }
     }
 
-    private void initVelocity( Properties props )
+	/**
+	 * Create a proper JNLP resource element text for jar or nativelib resources.
+	 *
+	 * @param resourceName       the name of the resource to add
+	 * @param resourcePathPrefix optional prefix to prepend to the resource name, separated with "/"; may be <tt>null</tt>
+	 * @param version            optional version String; omitted if <tt>null</tt> or empty
+	 * @param isNative           <tt>false</tt> if this is a jar-resource; <tt>true</tt> if this is a nativelib resource
+	 * @param containsMainClass  whether the resource contains the main class for this Webstart project; if <tt>true</tt>,
+	 *                           the main attribute is added with a value of <tt>true</tt>
+	 *
+	 * @return the resource element to be added to a JNLP resources block
+	 */
+	protected static String createReferenceText( String resourceName, String resourcePathPrefix, String version,
+												 boolean isNative,
+												 boolean containsMainClass ) {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(isNative ? "<nativelib href=\"" : "<jar href=\"");
+		if (StringUtils.isNotEmpty(resourcePathPrefix)) {
+			buffer.append(resourcePathPrefix);
+			buffer.append('/');
+		}
+		buffer.append(resourceName);
+		buffer.append("\"");
+
+		if (StringUtils.isNotEmpty(version)) {
+			buffer.append(" version=\"").append(version).append("\"");
+		}
+
+		if (containsMainClass) {
+			buffer.append(" main=\"true\"");
+		}
+
+		buffer.append("/>");
+		return buffer.toString();
+	}
+
+	/**
+	 * Check if the given qualifier indicates that this is a native resource.
+	 *
+	 * @param classifier the classifier to check
+	 *
+	 * @return <tt>true</tt> if the classifier is not null and starts with the term "native"
+	 */
+	protected static boolean isNativeClassifier( String classifier ) {
+		return classifier != null && classifier.startsWith("native");
+	}
+
+	private void initVelocity( Properties props )
     {
         try
         {

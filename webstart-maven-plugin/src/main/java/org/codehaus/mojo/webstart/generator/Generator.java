@@ -109,29 +109,16 @@ public class Generator
             for ( int i = 0; i < artifacts.size(); i++ )
             {
                 Artifact artifact = (Artifact) artifacts.get( i );
-				String classifier = artifact.getClassifier();
-				if (classifier == null || !classifier.startsWith("native")) {
-					buffer.append("<jar href=\"");
-				} else {
-					buffer.append("<nativelib href=\"");
-				}
-                if ( jarLibPath != null )
-                {
-                    buffer.append( jarLibPath ).append( "/" );
-                }
-                buffer.append( artifact.getFile().getName() ).append( "\"" );
-
-                if ( config.isOutputJarVersions() )
-                {
-                    buffer.append( " version=\"" ).append( artifact.getVersion() ).append( "\"" );
-                }
-
-                if ( config.isArtifactWithMainClass( artifact ) )
-                {
-                    buffer.append( " main=\"true\"" );
-                }
-                buffer.append( "/>\n" );
-            }
+				String version = config.isOutputJarVersions() ? artifact.getVersion() : null;
+				buffer.append(
+						createReferenceText(artifact.getFile().getName(),
+											jarLibPath,
+											version,
+											isNativeClassifier(artifact.getClassifier()),
+											config.isArtifactWithMainClass(artifact)
+						)
+				).append("\n");
+			}
             dependenciesText = buffer.toString();
         }
         return dependenciesText;
