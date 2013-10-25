@@ -82,7 +82,7 @@ public class DefaultManifestTool implements ManifestTool {
             String line = buffer.readLine();
             while (line != null) {
                 // Skip empty lines (e.g the last line is always empty)
-                if (line.isEmpty()) {
+                if (line.length() == 0) {
                     continue;
                 }
                 manifest.addEntry(ManifestEntry.parseLine(line));
