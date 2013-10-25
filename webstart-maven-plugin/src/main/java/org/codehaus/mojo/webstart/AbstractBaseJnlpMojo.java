@@ -654,10 +654,10 @@ public abstract class AbstractBaseJnlpMojo
         verboseLog("Start modification of Manifest files");
 
         // process jars
-        File[] jarFiles = workDirectory.listFiles(unprocessedJarFileFilter);
+       final  File[] jarFiles = getLibDirectory().listFiles(unprocessedJarFileFilter);
 
         for (int i = 0; i < jarFiles.length; i++) {
-            File jarFile = jarFiles[i];
+            final File jarFile = jarFiles[i];
 
             verboseLog("Processing "+jarFile);
 
