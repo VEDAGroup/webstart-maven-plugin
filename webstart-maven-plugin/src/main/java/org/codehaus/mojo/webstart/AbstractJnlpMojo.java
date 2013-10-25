@@ -337,6 +337,7 @@ public abstract class AbstractJnlpMojo
                     getModifiedJnlpArtifacts() );
             }
 
+            modifyManifestFiles();
             signOrRenameJars();
             packJars();
             generateJnlpFile( getWorkDirectory() );

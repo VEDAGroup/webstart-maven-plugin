@@ -11,11 +11,10 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
- * Created with IntelliJ IDEA.
- * User: CPL
- * Date: 25.10.13
- * Time: 10:01
- * To change this template use File | Settings | File Templates.
+ * Default implementation of the {@link org.codehaus.mojo.webstart.manifestmodification.ManifestTool}.
+ *
+ * @author cplaetzinger <christian@plaetzinger.de>
+ * @plexus.component role-hint="default"
  */
 public class DefaultManifestTool implements ManifestTool {
 

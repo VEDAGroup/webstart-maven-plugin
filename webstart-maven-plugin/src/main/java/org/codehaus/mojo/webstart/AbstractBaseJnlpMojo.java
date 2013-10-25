@@ -27,6 +27,9 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.webstart.manifestmodification.ManifestEntry;
+import org.codehaus.mojo.webstart.manifestmodification.ManifestFile;
+import org.codehaus.mojo.webstart.manifestmodification.ManifestTool;
 import org.codehaus.mojo.webstart.sign.SignConfig;
 import org.codehaus.mojo.webstart.sign.SignTool;
 import org.codehaus.mojo.webstart.util.ArtifactUtil;
@@ -41,6 +44,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The superclass for all JNLP generating MOJOs.
@@ -207,6 +211,18 @@ public abstract class AbstractBaseJnlpMojo
      */
     private List compileClassPath;
 
+    /**
+     * Specifies if the Manifest file of the jars should be modified
+     * @parameter default-value="true"
+     */
+    private boolean modifyManifest;
+
+    /**
+     * Entries to add to existing Manifest file.
+     * @parameter
+     */
+    private Map<String, String> manifestEntries;
+
     // ----------------------------------------------------------------------
     // Components
     // ----------------------------------------------------------------------
@@ -266,6 +282,15 @@ public abstract class AbstractBaseJnlpMojo
      * @since 1.0-beta-4
      */
     private IOUtil ioUtil;
+
+    /**
+     * Manifest tool.
+     *
+     * @component role="org.codehaus.mojo.webstart.manifestmodification.ManifestTool"
+     * @required
+     * @readonly
+     */
+    private ManifestTool manifestTool;
 
     // ----------------------------------------------------------------------
     // Fields
@@ -616,6 +641,41 @@ public abstract class AbstractBaseJnlpMojo
         return shouldCopy;
     }
 
+    protected void modifyManifestFiles() throws MojoExecutionException {
+        if (!modifyManifest()) {
+            return;
+        }
+
+        if (manifestEntries == null || manifestEntries.isEmpty()) {
+            verboseLog("Manifest modification is enabled but no configuration given. Thus Manifest can not be modified");
+            return;
+        }
+
+        verboseLog("Start modification of Manifest files");
+
+        // process jars
+        File[] jarFiles = workDirectory.listFiles(unprocessedJarFileFilter);
+
+        for (int i = 0; i < jarFiles.length; i++) {
+            File jarFile = jarFiles[i];
+
+            verboseLog("Processing "+jarFile);
+
+            // Get existing Manifest from JAR
+            verboseLog("Read Manifest file from JAR");
+            final ManifestFile manifestFile = manifestTool.readManifestFromJar(jarFile);
+
+            // Add entries
+            verboseLog("Add entries to Manifest");
+            for (Map.Entry<String, String> entry : manifestEntries.entrySet()) {
+                manifestFile.addEntry(new ManifestEntry(entry.getKey(), entry.getValue()));
+            }
+
+            // Write back Manifest to JAR
+            verboseLog("Write Manifest back to JAR");
+            manifestTool.writeManifestToJar(manifestFile, jarFile);
+        }
+    }
 
     /**
      * If sign is enabled, sign the jars, otherwise rename them into final jars
@@ -769,6 +829,13 @@ public abstract class AbstractBaseJnlpMojo
     protected boolean unsignAlreadySignedJars()
     {
         return unsignAlreadySignedJars;
+    }
+
+    /**
+     * @return true if Manifest file of jars should be modified.
+     */
+    protected boolean modifyManifest() {
+        return modifyManifest;
     }
 
     protected Pack200Tool getPack200Tool()
