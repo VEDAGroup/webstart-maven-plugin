@@ -651,29 +651,39 @@ public abstract class AbstractBaseJnlpMojo
             return;
         }
 
-        verboseLog("Start modification of Manifest files");
+        final File directory = getLibDirectory();
+        final File[] jarFiles = directory.listFiles(unprocessedJarFileFilter);
+        if (jarFiles.length == 0) {
+            return;
+        }
+
+        verboseLog("modify Manifest of jars in " + directory + " found " + jarFiles.length + " jar(s) to modify");
+        verboseLog("The following entries will be added to the Manifest");
+        for (Map.Entry<String, String> entry : manifestEntries.entrySet()) {
+            verboseLog(new ManifestEntry(entry.getKey(), entry.getValue()).toString());
+        }
 
         // process jars
-       final  File[] jarFiles = getLibDirectory().listFiles(unprocessedJarFileFilter);
+        try {
 
-        for (int i = 0; i < jarFiles.length; i++) {
-            final File jarFile = jarFiles[i];
+            for (int i = 0; i < jarFiles.length; i++) {
+                final File jarFile = jarFiles[i];
 
-            verboseLog("Processing "+jarFile);
+                verboseLog("modify " + jarFile);
 
-            // Get existing Manifest from JAR
-            verboseLog("Read Manifest file from JAR");
-            final ManifestFile manifestFile = manifestTool.readManifestFromJar(jarFile);
+                // Get existing Manifest from JAR
+                final ManifestFile manifestFile = manifestTool.readManifestFromJar(jarFile);
 
-            // Add entries
-            verboseLog("Add entries to Manifest");
-            for (Map.Entry<String, String> entry : manifestEntries.entrySet()) {
-                manifestFile.addEntry(new ManifestEntry(entry.getKey(), entry.getValue()));
+                // Add entries
+                for (Map.Entry<String, String> entry : manifestEntries.entrySet()) {
+                    manifestFile.addEntry(new ManifestEntry(entry.getKey(), entry.getValue()));
+                }
+
+                // Write back Manifest to JAR
+                manifestTool.writeManifestToJar(manifestFile, jarFile);
             }
-
-            // Write back Manifest to JAR
-            verboseLog("Write Manifest back to JAR");
-            manifestTool.writeManifestToJar(manifestFile, jarFile);
+        } finally {
+            manifestTool.finalizeOperations();
         }
     }
 

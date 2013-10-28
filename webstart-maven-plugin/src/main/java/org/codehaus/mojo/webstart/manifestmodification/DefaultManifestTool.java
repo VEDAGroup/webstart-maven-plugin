@@ -3,6 +3,8 @@ package org.codehaus.mojo.webstart.manifestmodification;
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileReader;
 import de.schlichtherle.truezip.file.TFileWriter;
+import de.schlichtherle.truezip.file.TVFS;
+import de.schlichtherle.truezip.fs.FsSyncException;
 import org.apache.maven.plugin.MojoExecutionException;
 
 import java.io.*;
@@ -41,7 +43,7 @@ public class DefaultManifestTool implements ManifestTool {
      * @return Returns the default path to the Manifest file inside the JAR file.
      */
     private File getManifestPathInJar(File jarFile) {
-        return new TFile(jarFile.getName() + "/" + MANIFEST_PATH_IN_ZIP);
+        return new TFile(jarFile.getAbsoluteFile() + "/" + MANIFEST_PATH_IN_ZIP);
     }
 
     private void checkIfManifestIsAvailable(File jarFile) throws MojoExecutionException {
@@ -82,10 +84,9 @@ public class DefaultManifestTool implements ManifestTool {
             String line = buffer.readLine();
             while (line != null) {
                 // Skip empty lines (e.g the last line is always empty)
-                if (line.length() == 0) {
-                    continue;
+                if (line.length() > 0) {
+                    manifest.addEntry(ManifestEntry.parseLine(line));
                 }
-                manifest.addEntry(ManifestEntry.parseLine(line));
                 line = buffer.readLine();
             }
 
@@ -117,7 +118,6 @@ public class DefaultManifestTool implements ManifestTool {
             for (ManifestEntry entry : manifest.getEntries()) {
                 buffer.write(entry.toString());
                 buffer.newLine();
-
             }
         } catch (FileNotFoundException e) {
             // Should not happen due to previous check. But we handle it anyway.
@@ -135,6 +135,15 @@ public class DefaultManifestTool implements ManifestTool {
             } catch (IOException e) {
                 // Ignore on close
             }
+        }
+    }
+
+    public void finalizeOperations() throws MojoExecutionException {
+        try {
+            TVFS.umount();
+        } catch (FsSyncException e) {
+            // We should fail here. Otherwise the jars can not be accessed by the following steps like signing.
+            throw new MojoExecutionException("Failed to finalize Manifest operations: " + e.getMessage(), e);
         }
     }
 }

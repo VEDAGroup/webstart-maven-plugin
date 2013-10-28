@@ -31,4 +31,12 @@ public interface ManifestTool {
      *          if something wrong occurs
      */
     public void writeManifestToJar(ManifestFile manifest, File jarFile) throws MojoExecutionException;
+
+
+    /**
+     * This method has to be called at the end of any operations done with the ManifestTool. <br/>
+     * Explanation:<br/> Depending on the underlying implementation it may be necessary to clean-up virtual file
+     * systems or temporary files. Otherwise the following operations on the jar files may fail.
+     */
+    public void finalizeOperations() throws MojoExecutionException;
 }

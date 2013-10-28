@@ -15,8 +15,18 @@ public class ManifestEntry {
     private final String value;
 
     public ManifestEntry(String header, String value) {
-        this.header = header;
+        this.header = formatHeader(header, value != null);
         this.value = value;
+    }
+
+    private String formatHeader(String header, boolean valueAvailable) {
+        if (!valueAvailable) {
+            return header;
+        }
+
+        // Due to the original configuration is XML based the header is always lowercase.
+        final String firstCharacterInUpperCase = header.substring(0, 1).toUpperCase();
+        return firstCharacterInUpperCase + header.substring(1);
     }
 
     public static ManifestEntry parseLine(final String line) {
@@ -26,18 +36,24 @@ public class ManifestEntry {
         }
 
         int colonPos = line.indexOf(":");
+        final String header;
+        final String value;
         if (colonPos < 0) {
-            throw new IllegalArgumentException("Given line '" + line
-                    + "' is invalid because it does not contain expected separator.");
+            header = line;
+            value = null;
+        } else {
+            header = line.substring(0, colonPos);
+            value = line.substring(colonPos + 1).trim();
         }
-
-        final String header = line.substring(0, colonPos + 1);
-        final String value = line.substring(colonPos + 1);
 
         return new ManifestEntry(header, value);
     }
 
     public String toString() {
-        return header + SEPARATOR + SPACE + value;
+        if (value == null) {
+            return header;
+        } else {
+            return header + SEPARATOR + SPACE + value;
+        }
     }
 }
