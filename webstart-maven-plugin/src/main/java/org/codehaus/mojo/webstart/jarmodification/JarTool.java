@@ -1,4 +1,4 @@
-package org.codehaus.mojo.webstart.manifestmodification;
+package org.codehaus.mojo.webstart.jarmodification;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,14 +23,14 @@ import org.apache.maven.plugin.MojoExecutionException;
 import java.io.File;
 
 /**
- * Tool to handle modify Manifest files in existing jar files.
+ * Tool to perform some operations on JAR files. Mainly used to read files from the jar or to add files to the jar.
  *
  * @author Christian Plätzinger <christian@plaetzinger.de>
  * @author $LastChangedBy$
  * @version $Revision$
  * @since 25 October 2013
  */
-public interface ManifestTool {
+public interface JarTool {
     /**
      * Reads the existing Manifest file from a given JAR.
      *
@@ -53,7 +53,7 @@ public interface ManifestTool {
 
 
     /**
-     * This method has to be called at the end of any operations done with the ManifestTool. <br/>
+     * This method has to be called at the end of any operations done with the JarTool. <br/>
      * Explanation:<br/> Depending on the underlying implementation it may be necessary to clean-up virtual file
      * systems or temporary files. Otherwise the following operations on the jar files may fail.
      */
@@ -61,7 +61,8 @@ public interface ManifestTool {
 
     /**
      * Adds a JNLP file to a jar file.
-     * @param jarFile jar file
+     *
+     * @param jarFile  jar file
      * @param jnlpFile JNLP file to add
      */
     public void addJnlpToJar(File jarFile, File jnlpFile) throws MojoExecutionException;

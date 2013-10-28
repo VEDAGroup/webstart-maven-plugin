@@ -28,9 +28,9 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.webstart.manifestmodification.ManifestEntry;
-import org.codehaus.mojo.webstart.manifestmodification.ManifestFile;
-import org.codehaus.mojo.webstart.manifestmodification.ManifestTool;
+import org.codehaus.mojo.webstart.jarmodification.JarTool;
+import org.codehaus.mojo.webstart.jarmodification.ManifestEntry;
+import org.codehaus.mojo.webstart.jarmodification.ManifestFile;
 import org.codehaus.mojo.webstart.sign.SignConfig;
 import org.codehaus.mojo.webstart.sign.SignTool;
 import org.codehaus.mojo.webstart.util.ArtifactUtil;
@@ -300,11 +300,11 @@ public abstract class AbstractBaseJnlpMojo
     /**
      * Manifest tool.
      *
-     * @component role="org.codehaus.mojo.webstart.manifestmodification.ManifestTool"
+     * @component role="org.codehaus.mojo.webstart.jarmodification.JarTool"
      * @required
      * @readonly
      */
-    private ManifestTool manifestTool;
+    private JarTool jarTool;
 
     // ----------------------------------------------------------------------
     // Fields
@@ -686,7 +686,7 @@ public abstract class AbstractBaseJnlpMojo
                 verboseLog("modify " + jarFile);
 
                 // Get existing Manifest from JAR
-                final ManifestFile manifestFile = manifestTool.readManifestFromJar(jarFile);
+                final ManifestFile manifestFile = jarTool.readManifestFromJar(jarFile);
 
                 // Add entries
                 for (Map.Entry<String, String> entry : manifestEntries.entrySet()) {
@@ -695,10 +695,10 @@ public abstract class AbstractBaseJnlpMojo
                 generateApplicationNameEntry(jarFile, manifestFile);
 
                 // Write back Manifest to JAR
-                manifestTool.writeManifestToJar(manifestFile, jarFile);
+                jarTool.writeManifestToJar(manifestFile, jarFile);
             }
         } finally {
-            manifestTool.finalizeOperations();
+            jarTool.finalizeOperations();
         }
     }
 
@@ -717,9 +717,9 @@ public abstract class AbstractBaseJnlpMojo
         verboseLog("\tMain jar file: " + mainJarFile);
         verboseLog("\tJNLP file: " + jnlpFile);
         try {
-            manifestTool.addJnlpToJar(mainJarFile, jnlpFile);
+            jarTool.addJnlpToJar(mainJarFile, jnlpFile);
         } finally {
-            manifestTool.finalizeOperations();
+            jarTool.finalizeOperations();
         }
         signTool.sign(getSign(), mainJarFile, mainJarFile);
     }

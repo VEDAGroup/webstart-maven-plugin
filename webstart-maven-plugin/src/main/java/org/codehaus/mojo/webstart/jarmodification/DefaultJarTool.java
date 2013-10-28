@@ -1,4 +1,4 @@
-package org.codehaus.mojo.webstart.manifestmodification;
+package org.codehaus.mojo.webstart.jarmodification;
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,7 +31,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 /**
- * Default implementation of the {@link org.codehaus.mojo.webstart.manifestmodification.ManifestTool}.
+ * Default implementation of the {@link JarTool}.
  *
  * @author Christian Plätzinger <christian@plaetzinger.de>
  * @author $LastChangedBy$
@@ -39,7 +39,7 @@ import java.util.zip.ZipFile;
  * @plexus.component role-hint="default"
  * @since 25 October 2013
  */
-public class DefaultManifestTool implements ManifestTool {
+public class DefaultJarTool implements JarTool {
 
     private static final String JNLP_FILE_NAME = "APPLICATION.JNLP";
     private static final String JNLP_INF_DIR = "JNLP-INF";

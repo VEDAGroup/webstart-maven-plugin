@@ -1,4 +1,4 @@
-package org.codehaus.mojo.webstart.manifestmodification;
+package org.codehaus.mojo.webstart.jarmodification;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
