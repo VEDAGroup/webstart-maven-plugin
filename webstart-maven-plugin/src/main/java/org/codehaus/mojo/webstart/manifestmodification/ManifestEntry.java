@@ -15,18 +15,8 @@ public class ManifestEntry {
     private final String value;
 
     public ManifestEntry(String header, String value) {
-        this.header = formatHeader(header, value != null);
+        this.header = header;
         this.value = value;
-    }
-
-    private String formatHeader(String header, boolean valueAvailable) {
-        if (!valueAvailable) {
-            return header;
-        }
-
-        // Due to the original configuration is XML based the header is always lowercase.
-        final String firstCharacterInUpperCase = header.substring(0, 1).toUpperCase();
-        return firstCharacterInUpperCase + header.substring(1);
     }
 
     public static ManifestEntry parseLine(final String line) {
@@ -55,5 +45,13 @@ public class ManifestEntry {
         } else {
             return header + SEPARATOR + SPACE + value;
         }
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

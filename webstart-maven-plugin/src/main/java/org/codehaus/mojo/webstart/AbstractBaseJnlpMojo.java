@@ -69,6 +69,7 @@ public abstract class AbstractBaseJnlpMojo
     private static final String UNPROCESSED_PREFIX = "unprocessed_";
 
     public static final String JAR_SUFFIX = ".jar";
+    public static final String APPLICATION_NAME_ENTRY_HEADER = "Application-Name";
 
     // ----------------------------------------------------------------------
     // Mojo Parameters
@@ -216,6 +217,12 @@ public abstract class AbstractBaseJnlpMojo
      * @parameter default-value="true"
      */
     private boolean modifyManifest;
+
+    /**
+     * Specifies if the Manifest entry for the application name should be auto generated
+     * @parameter default-value="false";
+     */
+    private boolean generateApplicationNameManifestEntry;
 
     /**
      * Entries to add to existing Manifest file.
@@ -678,6 +685,7 @@ public abstract class AbstractBaseJnlpMojo
                 for (Map.Entry<String, String> entry : manifestEntries.entrySet()) {
                     manifestFile.addEntry(new ManifestEntry(entry.getKey(), entry.getValue()));
                 }
+                generateApplicationNameEntry(jarFile, manifestFile);
 
                 // Write back Manifest to JAR
                 manifestTool.writeManifestToJar(manifestFile, jarFile);
@@ -685,6 +693,23 @@ public abstract class AbstractBaseJnlpMojo
         } finally {
             manifestTool.finalizeOperations();
         }
+    }
+
+    private void generateApplicationNameEntry(File jarFile, ManifestFile manifestFile) {
+        if (!generateApplicationNameManifestEntry) {
+            return;
+        }
+
+        // Do not generate entry if already exists. Existing entry should be better IMHO.
+        if (manifestFile.hasEntry(APPLICATION_NAME_ENTRY_HEADER)) {
+            verboseLog("Skipping generation of Application-Name entry because entry is already present.");
+            return;
+        }
+        // Remove unprocessed prefix and .jar suffix from filename.
+        final String jarFileName = jarFile.getName();
+        final String realJarFileName = jarFileName.substring(UNPROCESSED_PREFIX.length(), jarFileName.indexOf(JAR_SUFFIX));
+        manifestFile.addEntry(new ManifestEntry(APPLICATION_NAME_ENTRY_HEADER, realJarFileName));
+
     }
 
     /**
