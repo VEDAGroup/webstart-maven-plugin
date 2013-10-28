@@ -341,6 +341,7 @@ public abstract class AbstractJnlpMojo
             signOrRenameJars();
             packJars();
             generateJnlpFile( getWorkDirectory() );
+            packJnlpToMainJar(this, new File(getWorkDirectory(), jnlp.getOutputFile()));
             if ( withExtensions )
             {
                 generateJnlpExtensionsFile( getWorkDirectory() );

@@ -36,11 +36,14 @@ import java.util.zip.ZipFile;
  * @author Christian Plätzinger <christian@plaetzinger.de>
  * @author $LastChangedBy$
  * @version $Revision$
- * @since 25 October 2013
  * @plexus.component role-hint="default"
+ * @since 25 October 2013
  */
 public class DefaultManifestTool implements ManifestTool {
 
+    private static final String JNLP_FILE_NAME = "APPLICATION.JNLP";
+    private static final String JNLP_INF_DIR = "JNLP-INF";
+    private static final String JNLP_PATH_IN_ZIP = JNLP_INF_DIR + "/" + JNLP_FILE_NAME;
     private static final String MANIFEST_FILE_NAME = "MANIFEST.MF";
     private static final String META_INF_DIR = "META-INF";
     private static final String MANIFEST_PATH_IN_ZIP = META_INF_DIR + "/"
@@ -165,6 +168,16 @@ public class DefaultManifestTool implements ManifestTool {
         } catch (FsSyncException e) {
             // We should fail here. Otherwise the jars can not be accessed by the following steps like signing.
             throw new MojoExecutionException("Failed to finalize Manifest operations: " + e.getMessage(), e);
+        }
+    }
+
+    public void addJnlpToJar(File jarFile, File jnlpFile) throws MojoExecutionException {
+        final TFile applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_PATH_IN_ZIP);
+        final TFile jnlpFileAsTFile = new TFile(jnlpFile);
+        try {
+            jnlpFileAsTFile.cp(applicationJnlp);
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to add JNLP file to jar: " + e.getMessage(), e);
         }
     }
 }

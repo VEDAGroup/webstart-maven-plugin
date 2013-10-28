@@ -58,4 +58,12 @@ public interface ManifestTool {
      * systems or temporary files. Otherwise the following operations on the jar files may fail.
      */
     public void finalizeOperations() throws MojoExecutionException;
+
+    /**
+     * Adds a JNLP file to a jar file.
+     * @param jarFile jar file
+     * @param jnlpFile JNLP file to add
+     */
+    public void addJnlpToJar(File jarFile, File jnlpFile) throws MojoExecutionException;
+
 }

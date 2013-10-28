@@ -21,6 +21,7 @@ package org.codehaus.mojo.webstart;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
@@ -229,6 +230,12 @@ public abstract class AbstractBaseJnlpMojo
      * @parameter
      */
     private Map<String, String> manifestEntries;
+
+    /**
+     * Specifies if the generated JNLP file should be added to the main jar.
+     * @parameter default-value="false";
+     */
+    private boolean packJnlpToMainJar;
 
     // ----------------------------------------------------------------------
     // Components
@@ -693,6 +700,52 @@ public abstract class AbstractBaseJnlpMojo
         } finally {
             manifestTool.finalizeOperations();
         }
+    }
+
+
+    protected void packJnlpToMainJar( AbstractJnlpMojo config, File jnlpFile) throws MojoExecutionException {
+        if (!packJnlpToMainJar){
+            return;
+        }
+
+        final File mainJarFile = findMainJarFile(config, getLibDirectory(), processedJarFileFilter);
+        if (mainJarFile == null) {
+            throw new MojoExecutionException("Failed to find main jar file");
+        }
+
+        verboseLog("Adding JNLP file to main jar file");
+        verboseLog("\tMain jar file: " + mainJarFile);
+        verboseLog("\tJNLP file: " + jnlpFile);
+        try {
+            manifestTool.addJnlpToJar(mainJarFile, jnlpFile);
+        } finally {
+            manifestTool.finalizeOperations();
+        }
+        signTool.sign(getSign(), mainJarFile, mainJarFile);
+    }
+
+    private File findMainJarFile(AbstractJnlpMojo config, File libDirectory, FileFilter fileFilter) {
+
+        // To some really nasty loops to find the main jar file
+        final List artifacts = config.getPackagedJnlpArtifacts();
+        File mainJarFile = null;
+        String mainJarFileName = null;
+        for (int i = 0; i < artifacts.size(); i++) {
+            Artifact artifact = (Artifact) artifacts.get(i);
+            if (config.isArtifactWithMainClass(artifact)) {
+                mainJarFileName = artifact.getFile().getName();
+                break;
+            }
+        }
+
+        final File[] jarFiles = libDirectory.listFiles(fileFilter);
+        for (int i = 0; i < jarFiles.length; i++) {
+            File file = jarFiles[i];
+            if (file.getName().equals(mainJarFileName)) {
+                mainJarFile = file;
+            }
+        }
+        return mainJarFile;
     }
 
     private void generateApplicationNameEntry(File jarFile, ManifestFile manifestFile) {
