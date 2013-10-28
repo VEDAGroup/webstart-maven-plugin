@@ -700,7 +700,7 @@ public abstract class AbstractBaseJnlpMojo
             return;
         }
 
-        // Do not generate entry if already exists. Existing entry should be better IMHO.
+        // Do not generate entry if it already exists. Existing entry should be better IMHO.
         if (manifestFile.hasEntry(APPLICATION_NAME_ENTRY_HEADER)) {
             verboseLog("Skipping generation of Application-Name entry because entry is already present.");
             return;
@@ -709,7 +709,6 @@ public abstract class AbstractBaseJnlpMojo
         final String jarFileName = jarFile.getName();
         final String realJarFileName = jarFileName.substring(UNPROCESSED_PREFIX.length(), jarFileName.indexOf(JAR_SUFFIX));
         manifestFile.addEntry(new ManifestEntry(APPLICATION_NAME_ENTRY_HEADER, realJarFileName));
-
     }
 
     /**
