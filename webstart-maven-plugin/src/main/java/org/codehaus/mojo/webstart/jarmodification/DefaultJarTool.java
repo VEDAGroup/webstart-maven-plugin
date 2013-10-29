@@ -41,13 +41,12 @@ import java.util.zip.ZipFile;
  */
 public class DefaultJarTool implements JarTool {
 
-    private static final String JNLP_FILE_NAME = "APPLICATION.JNLP";
+    private static final String JNLP_TEMPLATE_FILE_NAME = "APPLICATION_TEMPLATE.JNLP";
     private static final String JNLP_INF_DIR = "JNLP-INF";
-    private static final String JNLP_PATH_IN_ZIP = JNLP_INF_DIR + "/" + JNLP_FILE_NAME;
+    private static final String JNLP_TEMPLATE_PATH_IN_ZIP = JNLP_INF_DIR + "/" + JNLP_TEMPLATE_FILE_NAME;
     private static final String MANIFEST_FILE_NAME = "MANIFEST.MF";
     private static final String META_INF_DIR = "META-INF";
-    private static final String MANIFEST_PATH_IN_ZIP = META_INF_DIR + "/"
-            + MANIFEST_FILE_NAME;
+    private static final String MANIFEST_PATH_IN_ZIP = META_INF_DIR + "/" + MANIFEST_FILE_NAME;
 
     public ManifestFile readManifestFromJar(File jarFile) throws MojoExecutionException {
 
@@ -172,12 +171,46 @@ public class DefaultJarTool implements JarTool {
     }
 
     public void addJnlpToJar(File jarFile, File jnlpFile) throws MojoExecutionException {
-        final TFile applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_PATH_IN_ZIP);
-        final TFile jnlpFileAsTFile = new TFile(jnlpFile);
+
+        final TFile applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_TEMPLATE_PATH_IN_ZIP);
+        Reader reader = null;
+        BufferedReader bufferedReader = null;
+        Writer writer = null;
+        BufferedWriter bufferedWriter = null;
+
+        // Read JNLP file and replace some placeholders
         try {
-            jnlpFileAsTFile.cp(applicationJnlp);
+            reader = new FileReader(jnlpFile);
+            bufferedReader = new BufferedReader(reader);
+            writer = new TFileWriter(applicationJnlp, false);
+            bufferedWriter = new BufferedWriter(writer);
+
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                // Replace $$variables with '*'
+                bufferedWriter.write(line.replaceAll("\\$\\$\\w*", "*"));
+                bufferedWriter.newLine();
+                line = bufferedReader.readLine();
+            }
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to add JNLP file to jar: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+                if (reader != null) {
+                    reader.close();
+                }
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                // ignore on close
+            }
         }
     }
 }
