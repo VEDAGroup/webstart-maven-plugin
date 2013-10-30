@@ -35,18 +35,9 @@ public class JarUtil {
     }
 
     public static String getApplicationNameFromJar(final String jarFileName) {
-
-        String applicationName = jarFileName;
         // Remove .jar suffix
-        applicationName = jarFileName.substring(0, jarFileName.toLowerCase().indexOf(".jar"));
-        // Remove -SNAPSHOT suffix if present
-        int snapshotSuffixPos = applicationName.indexOf("-SNAPSHOT");
-        if (snapshotSuffixPos > 0) {
-            applicationName = applicationName.substring(0, snapshotSuffixPos);
-        }
-        // Remove a version number if present
-        applicationName = applicationName.replaceAll("(-)(\\d.*)", "");
-
-        return applicationName;
+        // Remove -SNAPSHOT
+        // Remove a version number
+        return jarFileName.replaceAll("(.jar|.JAR)|(-SNAPSHOT)|(-\\d.*)", "");
     }
 }

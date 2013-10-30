@@ -38,6 +38,7 @@ public class JarUtilTest
         final String testName3 = "FooBar-1.0.jar";
         final String testName4 = "FooBar-1-SNAPSHOT.jar";
         final String testName5 = "FooBar-1.9.0.1-SNAPSHOT.jar";
+        final String testName6 = "FooBar-1.9.0.1-SNAPSHOT.JAR";
 
         final String expectedApplicationName = "FooBar";
 
@@ -46,5 +47,6 @@ public class JarUtilTest
         assertEquals(expectedApplicationName, JarUtil.getApplicationNameFromJar(testName3));
         assertEquals(expectedApplicationName, JarUtil.getApplicationNameFromJar(testName4));
         assertEquals(expectedApplicationName, JarUtil.getApplicationNameFromJar(testName5));
+        assertEquals(expectedApplicationName, JarUtil.getApplicationNameFromJar(testName6));
     }
 }
