@@ -184,44 +184,12 @@ public class DefaultJarTool implements JarTool {
                 applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_TEMPLATE_PATH_IN_ZIP);
                 break;
         }
-        Reader reader = null;
-        BufferedReader bufferedReader = null;
-        Writer writer = null;
-        BufferedWriter bufferedWriter = null;
 
-        // Read JNLP file and replace some placeholders
+        final TFile jnlpFileAsTFile = new TFile(jnlpFile);
         try {
-            reader = new FileReader(jnlpFile);
-            bufferedReader = new BufferedReader(reader);
-            writer = new TFileWriter(applicationJnlp, false);
-            bufferedWriter = new BufferedWriter(writer);
-
-            String line = bufferedReader.readLine();
-            while (line != null) {
-                // Replace $$variables with '*'
-                bufferedWriter.write(line.replaceAll("\\$\\$\\w*", "*"));
-                bufferedWriter.newLine();
-                line = bufferedReader.readLine();
-            }
+            jnlpFileAsTFile.cp(applicationJnlp);
         } catch (IOException e) {
-            throw new MojoExecutionException("Failed to add JNLP file to jar: " + e.getMessage(), e);
-        } finally {
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-                if (reader != null) {
-                    reader.close();
-                }
-                if (bufferedWriter != null) {
-                    bufferedWriter.close();
-                }
-                if (writer != null) {
-                    writer.close();
-                }
-            } catch (IOException e) {
-                // ignore on close
-            }
+            throw new MojoExecutionException("Failed to include JNLP into jar file: " + e.getMessage(), e);
         }
     }
 }

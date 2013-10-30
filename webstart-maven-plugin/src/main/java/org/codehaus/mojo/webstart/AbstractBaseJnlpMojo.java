@@ -35,9 +35,7 @@ import org.codehaus.mojo.webstart.util.ArtifactUtil;
 import org.codehaus.mojo.webstart.util.IOUtil;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -212,13 +210,13 @@ public abstract class AbstractBaseJnlpMojo
     private List compileClassPath;
 
     /**
-     * Specifies if the Manifest file of the jars should be modified
+     * Defines whether to modify the Manifest files of the jars
      * @parameter default-value="true"
      */
     private boolean modifyManifest;
 
     /**
-     * Specifies if the Manifest entry for the application name should be auto generated
+     * Defines whether to auto generate the Manifest entry for the application name
      * @parameter default-value="false";
      */
     private boolean generateApplicationNameManifestEntry;
@@ -230,13 +228,13 @@ public abstract class AbstractBaseJnlpMojo
     private Map<String, String> manifestEntries;
 
     /**
-     * Specifies if the generated JNLP file should be added to the main jar.
+     * Defines whether to include the generated JNLP file into the main jar.
      * @parameter default-value="false";
      */
-    private boolean packJnlpToMainJar;
+    private boolean includeJnlpInMainJar;
 
     /**
-     * Specifies how the JNLP file should be included in the jar.
+     * Defines how the JNLP file should be included in the jar.
      *
      * @parameter default-value="APPLICATION"
      */
@@ -708,8 +706,8 @@ public abstract class AbstractBaseJnlpMojo
     }
 
 
-    protected void packJnlpToMainJar( AbstractJnlpMojo config, File jnlpFile) throws MojoExecutionException {
-        if (!packJnlpToMainJar){
+    protected void includeJnlpToMainJar(AbstractJnlpMojo config, File baseJnlpFile) throws MojoExecutionException {
+        if (!includeJnlpInMainJar){
             return;
         }
 
@@ -718,15 +716,70 @@ public abstract class AbstractBaseJnlpMojo
             throw new MojoExecutionException("Failed to find main jar file");
         }
 
-        verboseLog("Adding JNLP file to main jar file");
-        verboseLog("\tMain jar file: " + mainJarFile);
-        verboseLog("\tJNLP file: " + jnlpFile);
+
+        File formattedJnlpFile = baseJnlpFile;
+        if(includeJnlpType.equals(IncludeJnlpType.APPLICATION_TEMPLATE)){
+            formattedJnlpFile = formatJnlpFile(baseJnlpFile);
+        }
         try {
-            jarTool.addJnlpToJar(mainJarFile, jnlpFile, includeJnlpType);
+            verboseLog("Adding JNLP file to main jar file");
+            verboseLog("\tMain jar file: " + mainJarFile);
+            verboseLog("\tJNLP file: " + formattedJnlpFile);
+            jarTool.addJnlpToJar(mainJarFile, formattedJnlpFile, includeJnlpType);
         } finally {
+            if (!baseJnlpFile.equals(formattedJnlpFile)) {
+                formattedJnlpFile.delete();
+            }
             jarTool.finalizeOperations();
         }
         signTool.sign(getSign(), mainJarFile, mainJarFile);
+    }
+
+    private File formatJnlpFile(File jnlpFile) throws MojoExecutionException {
+        Reader reader = null;
+        BufferedReader bufferedReader = null;
+        Writer writer = null;
+        BufferedWriter bufferedWriter = null;
+
+        final File formattedJnlpFile = new File(jnlpFile.getAbsolutePath() + ".FORMATTED");
+        verboseLog("Format JNLP file");
+        verboseLog("\tGenerated JNLP file: " + jnlpFile);
+        verboseLog("\tFormatted JNLP file: " + formattedJnlpFile);
+        // Read JNLP file and replace some placeholders
+        try {
+            reader = new FileReader(jnlpFile);
+            bufferedReader = new BufferedReader(reader);
+            writer = new FileWriter(formattedJnlpFile, false);
+            bufferedWriter = new BufferedWriter(writer);
+
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                // Replace $$variables with '*'
+                bufferedWriter.write(line.replaceAll("\\$\\$\\w*", "*"));
+                bufferedWriter.newLine();
+                line = bufferedReader.readLine();
+            }
+            return formattedJnlpFile;
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to format JNLP file: " + e.getMessage(), e);
+        } finally {
+            try {
+                if (bufferedReader != null) {
+                    bufferedReader.close();
+                }
+                if (reader != null) {
+                    reader.close();
+                }
+                if (bufferedWriter != null) {
+                    bufferedWriter.close();
+                }
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                // ignore on close
+            }
+        }
     }
 
     private File findMainJarFile(AbstractJnlpMojo config, File libDirectory, FileFilter fileFilter) {
