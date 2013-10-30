@@ -28,10 +28,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.mojo.webstart.jarmodification.IncludeJnlpType;
-import org.codehaus.mojo.webstart.jarmodification.JarTool;
-import org.codehaus.mojo.webstart.jarmodification.ManifestEntry;
-import org.codehaus.mojo.webstart.jarmodification.ManifestFile;
+import org.codehaus.mojo.webstart.jarmodification.*;
 import org.codehaus.mojo.webstart.sign.SignConfig;
 import org.codehaus.mojo.webstart.sign.SignTool;
 import org.codehaus.mojo.webstart.util.ArtifactUtil;
@@ -766,10 +763,12 @@ public abstract class AbstractBaseJnlpMojo
             verboseLog("Skipping generation of Application-Name entry because entry is already present.");
             return;
         }
-        // Remove unprocessed prefix and .jar suffix from filename.
+        // Remove unprocessed prefix
         final String jarFileName = jarFile.getName();
-        final String realJarFileName = jarFileName.substring(UNPROCESSED_PREFIX.length(), jarFileName.indexOf(JAR_SUFFIX));
-        manifestFile.addEntry(new ManifestEntry(APPLICATION_NAME_ENTRY_HEADER, realJarFileName));
+        final String jarFileNameWithoutPrefix = jarFileName.substring(UNPROCESSED_PREFIX.length(), jarFileName.length());
+        // Get Application-Name
+        final String applicationName = JarUtil.getApplicationNameFromJar(jarFileNameWithoutPrefix);
+        manifestFile.addEntry(new ManifestEntry(APPLICATION_NAME_ENTRY_HEADER, applicationName));
     }
 
     /**
