@@ -43,6 +43,8 @@ public class DefaultJarTool implements JarTool {
 
     private static final String JNLP_TEMPLATE_FILE_NAME = "APPLICATION_TEMPLATE.JNLP";
     private static final String JNLP_INF_DIR = "JNLP-INF";
+    private static final Object JNLP_FILE_NAME = "APPLICATION.JNLP";
+    private static final String JNLP_PATH_IN_ZIP = JNLP_INF_DIR + "/" + JNLP_FILE_NAME;
     private static final String JNLP_TEMPLATE_PATH_IN_ZIP = JNLP_INF_DIR + "/" + JNLP_TEMPLATE_FILE_NAME;
     private static final String MANIFEST_FILE_NAME = "MANIFEST.MF";
     private static final String META_INF_DIR = "META-INF";
@@ -170,9 +172,18 @@ public class DefaultJarTool implements JarTool {
         }
     }
 
-    public void addJnlpToJar(File jarFile, File jnlpFile) throws MojoExecutionException {
+    public void addJnlpToJar(File jarFile, File jnlpFile, IncludeJnlpType includeJnlpType) throws MojoExecutionException {
 
-        final TFile applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_TEMPLATE_PATH_IN_ZIP);
+        final TFile applicationJnlp;
+        switch (includeJnlpType) {
+            case APPLICATION:
+            default:
+                applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_PATH_IN_ZIP);
+                break;
+            case APPLICATION_TEMPLATE:
+                applicationJnlp = new TFile(jarFile.getAbsoluteFile() + "/" + JNLP_TEMPLATE_PATH_IN_ZIP);
+                break;
+        }
         Reader reader = null;
         BufferedReader bufferedReader = null;
         Writer writer = null;

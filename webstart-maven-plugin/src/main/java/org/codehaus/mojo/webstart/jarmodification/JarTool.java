@@ -62,9 +62,10 @@ public interface JarTool {
     /**
      * Adds a JNLP file to a jar file.
      *
-     * @param jarFile  jar file
-     * @param jnlpFile JNLP file to add
+     * @param jarFile    jar file
+     * @param jnlpFile   JNLP file to add
+     * @param includeJnlpType How the JNLP should be included
      */
-    public void addJnlpToJar(File jarFile, File jnlpFile) throws MojoExecutionException;
+    public void addJnlpToJar(File jarFile, File jnlpFile, IncludeJnlpType includeJnlpType) throws MojoExecutionException;
 
 }

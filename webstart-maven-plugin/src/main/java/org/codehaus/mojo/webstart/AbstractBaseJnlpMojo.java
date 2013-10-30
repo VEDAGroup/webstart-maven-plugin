@@ -28,6 +28,7 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.mojo.webstart.jarmodification.IncludeJnlpType;
 import org.codehaus.mojo.webstart.jarmodification.JarTool;
 import org.codehaus.mojo.webstart.jarmodification.ManifestEntry;
 import org.codehaus.mojo.webstart.jarmodification.ManifestFile;
@@ -236,6 +237,13 @@ public abstract class AbstractBaseJnlpMojo
      * @parameter default-value="false";
      */
     private boolean packJnlpToMainJar;
+
+    /**
+     * Specifies how the JNLP file should be included in the jar.
+     *
+     * @parameter default-value="APPLICATION"
+     */
+    private IncludeJnlpType includeJnlpType;
 
     // ----------------------------------------------------------------------
     // Components
@@ -717,7 +725,7 @@ public abstract class AbstractBaseJnlpMojo
         verboseLog("\tMain jar file: " + mainJarFile);
         verboseLog("\tJNLP file: " + jnlpFile);
         try {
-            jarTool.addJnlpToJar(mainJarFile, jnlpFile);
+            jarTool.addJnlpToJar(mainJarFile, jnlpFile, includeJnlpType);
         } finally {
             jarTool.finalizeOperations();
         }
