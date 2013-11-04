@@ -733,9 +733,18 @@ public abstract class AbstractBaseJnlpMojo
             jarTool.finalizeOperations();
         }
         if (getSign() != null) {
-            final File signedJar = new File(mainJarFile, mainJarFile.getName() + "-SIGNED");
+            signTool.unsign(mainJarFile, isVerbose());
+            /*
+             * Since the jarsigner tool provided by JDK/JRE 1.6 is not able to accept the same jar file
+             * as source and target we have to do some nasty stuff.
+             */
+            final File signedJar = new File(mainJarFile.getParent(), mainJarFile.getName() + "-SIGNED");
             signTool.sign(getSign(), mainJarFile, signedJar);
-            signedJar.renameTo(mainJarFile);
+            ioUtil.deleteFile(mainJarFile, "Could not delete main Jar");
+            final boolean renamed = signedJar.renameTo(mainJarFile);
+            if (!renamed) {
+                throw new MojoExecutionException("Failed to renamed signed main jar to final name");
+            }
         }
     }
 
