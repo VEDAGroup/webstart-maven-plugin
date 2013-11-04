@@ -732,7 +732,10 @@ public abstract class AbstractBaseJnlpMojo
             }
             jarTool.finalizeOperations();
         }
-        signTool.sign(getSign(), mainJarFile, mainJarFile);
+        if (getSign() != null) {
+            signTool.unsign(mainJarFile, isVerbose());
+            signTool.sign(getSign(), mainJarFile, mainJarFile);
+        }
     }
 
     private File formatJnlpFile(File jnlpFile) throws MojoExecutionException {
