@@ -733,8 +733,9 @@ public abstract class AbstractBaseJnlpMojo
             jarTool.finalizeOperations();
         }
         if (getSign() != null) {
-            signTool.unsign(mainJarFile, isVerbose());
-            signTool.sign(getSign(), mainJarFile, mainJarFile);
+            final File signedJar = new File(mainJarFile, mainJarFile.getName() + "-SIGNED");
+            signTool.sign(getSign(), mainJarFile, signedJar);
+            signedJar.renameTo(mainJarFile);
         }
     }
 
