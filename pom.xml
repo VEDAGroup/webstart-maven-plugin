@@ -424,6 +424,7 @@
             <configuration>
                 <useReleaseProfile>false</useReleaseProfile>
                 <arguments>-Pveda-release</arguments>
+                <goals>deploy</goals>
             </configuration>
         </plugin>
       </plugins>
