@@ -425,6 +425,7 @@
         <plugin>
            <groupId>org.apache.maven.pluginsu</groupId>
               <artifactId>maven-gpg-plugin</artifactId>
+            <version>1.4</version>
               <configuration>
                   <skip>true</skip>
               </configuration>
