@@ -422,6 +422,13 @@
                 <arguments>-Pveda-release</arguments>
             </configuration>
         </plugin>
+        <plugin>
+           <groupId>org.apache.maven.pluginsu</groupId>
+              <artifactId>maven-gpg-plugin</artifactId>
+              <configuration>
+                  <skip>true</skip>
+              </configuration>
+          </plugin>
       </plugins>
     </pluginManagement>
   </build>
