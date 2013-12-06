@@ -337,9 +337,11 @@ public abstract class AbstractJnlpMojo
                     getModifiedJnlpArtifacts() );
             }
 
+            modifyManifestFiles();
             signOrRenameJars();
             packJars();
             generateJnlpFile( getWorkDirectory() );
+            includeJnlpToMainJar(this, new File(getWorkDirectory(), jnlp.getOutputFile()));
             if ( withExtensions )
             {
                 generateJnlpExtensionsFile( getWorkDirectory() );
