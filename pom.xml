@@ -422,7 +422,7 @@
           <version>2.4.1</version>
             <configuration>
                 <useReleaseProfile>false</useReleaseProfile>
-                <releaseProfiles>veda-release</releaseProfiles>
+                <arguments>-Pveda-release</arguments>
             </configuration>
         </plugin>
       </plugins>
