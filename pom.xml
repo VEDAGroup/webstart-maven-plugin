@@ -189,7 +189,7 @@
                   <plugin>
                       <groupId>org.apache.maven.plugins</groupId>
                       <artifactId>maven-gpg-plugin</artifactId>
-                      <executions>
+                      <!--<executions>
                           <execution>
                               <id>sign-artifacts</id>
                               <phase>verify</phase>
@@ -197,7 +197,10 @@
                                   <goal>sign</goal>
                               </goals>
                           </execution>
-                      </executions>
+                      </executions>-->
+                      <configuration>
+                            <skip>true</skip>
+                      </configuration>
                   </plugin>
               </plugins>
           </build>
@@ -422,14 +425,6 @@
                 <arguments>-Pveda-release</arguments>
             </configuration>
         </plugin>
-        <plugin>
-           <groupId>org.apache.maven.pluginsu</groupId>
-              <artifactId>maven-gpg-plugin</artifactId>
-            <version>1.4</version>
-              <configuration>
-                  <skip>true</skip>
-              </configuration>
-          </plugin>
       </plugins>
     </pluginManagement>
   </build>
