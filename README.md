@@ -25,17 +25,17 @@ make sure you use Maven 3.0.x to build. On Windows this can be done for the curr
 To be able to deploy to VEDA internal Nexus server you have to make sure your settings.xml contains
 valid credentials:
     <servers>
-         <server>
-             <id>veda-releases</id>
-             <username>Username</username>
-             <password>Password</password>
-         </server>
+        <server>
+            <id>veda-releases</id>
+            <username>Username</username>
+            <password>Password</password>
+        </server>
     </servers>
 
 During the release process the maven-release-plugin will push changes to the remote repository on GitHub.
 If not using ssh based authentication it might be required to store your GitHub credentials in the settings.xml
 file as well.
-     <profiles>
+    <profiles>
         <profile>
             <id>github-release</id>
             <properties>
