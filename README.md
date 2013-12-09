@@ -19,11 +19,13 @@ Make sure all required changes are committed and pushed to the remote repository
 
 The Maven build will fail (to be more precise: one of the integration tests) using Maven version 3.1.x. So
 make sure you use Maven 3.0.x to build. On Windows this can be done for the current shell by the following commands:
+
 	set M2_HOME=<your path to Maven 3.0.x>
 	set PATH=%M2_HOME%bin;%PATH%
 
 To be able to deploy to VEDA internal Nexus server you have to make sure your settings.xml contains
 valid credentials:
+
 	<servers>
 		<server>
 			<id>veda-releases</id>
@@ -35,6 +37,7 @@ valid credentials:
 During the release process the maven-release-plugin will push changes to the remote repository on GitHub.
 If not using ssh based authentication it might be required to store your GitHub credentials in the settings.xml
 file as well.
+
 	<profiles>
 		<profile>
 			<id>github-release</id>
@@ -57,5 +60,6 @@ Build the release
 - Perform the release `mvn release:perform`
 
 If something went wrong here are some useful commands to get back to a clean state
+
 	mvn release:clean
 	mvn release:rollback
